@@ -320,4 +320,5 @@ longrd.wang
 JIRA
 https://jira.navman.co.nz/jira/browse/TI-1?filter=24846
 *****************************************************************************************************************************************
-
+debian 64位下解决“bash ./没有那个文件或目录”的问题
+sudo apt-get install lib32z1 lib32ncurses5
