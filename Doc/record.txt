@@ -1,0 +1,323 @@
+﻿去除ie广告悬浮窗：工具->Internet选项->安全->自定义级别-> 脚本
+
+gaotong:longrd.wang@mic.com.tw
+!QAZ2wsx
+sudo umount /media/usb0
+
+EPR:
+R2503
+1qaz2wsx
+
+
+SC600
+http://10.88.25.195/aiotbc/bsp/sc600/
+
+SC600 kernel (faster)
+http://10.88.25.195/aiotbc/bsp/kernel_sc600/
+
+MSM8909
+http://10.88.25.195/aiotbc/bsp/msm8909/
+
+MSM8909 kernel (faster)
+http://10.88.25.195/aiotbc/bsp/kernel_msm8909/
+
+
+机子usb连接电脑，手动把mcu文件拖进internel shared storage根目录。
+执行adb 命令 adb shell am broadcast -a com.mitac.upgrade.UPGRADE_MCU_FIRMWARE
+
+********************************************************************************************************************
+打开ssc hal log的方式（android o及以上）
+adb root
+adb wait-for-device
+adb remount
+adb shell "echo persist.vendor.debug.ar.hal=1 >> /system/build.prop"
+adb shell "echo persist.vendor.debug.sensors.hal=1 >> /system/build.prop"
+adb shell "echo debug.vendor.sns.libsensor1=1 >> /system/build.prop"
+adb shell "echo debug.vendor.sns.daemon=1 >> /system/build.prop"
+adb shell sync
+adb reboot
+
+获取sensor init log
+adb root
+adb wait-for-device
+adb shell stop sensors
+adb shell "echo 'related' > /sys/bus/msm_subsys/devices/subsys2/restart_level"
+在QXDM的command:中输入send_data 75 37 03 48 00
+adb shell start sensors 
+
+
+QXDM log without usb
+adb shell mkdir /sdcard/diag_logs/
+adb push Diag.cfg /sdcard/diag_logs/
+/system/bin/#diag_mdlog -f /sdcard/diag_logs/Diag.cfg -o /sdcard/diag_logs/
+adb pull /sdcard/diag_logs/ .
+****************************************************************************************************************
+1.source build/envsetup.sh
+2.lunch chiron_pro-userdebug
+  lunch surfing_pro-userdebug
+3.make dtboimage
+4.make kernel
+5.make vendorimage
+6.sudo ./fastboot --disable-verity flash vbmeta vbmeta.img
+sudo ~/sharefile/fastboot --disable-verity flash vbmeta vbmeta.img
+sudo fastboot flash -S 500M super super.img 
+ ~/sharefile/adb disable-verity
+
+7.	adb root
+        adb disable-verity
+8.	adb remount
+9.	adb shell rm /mnt/vendor/persist/sensors/sns.reg
+	adb pull /vendor/etc/sensors/sensor_def_qcomdev.conf ./
+	adb shell rm /vendor/etc/sensors/sensor_def_qcomdev.conf
+	adb push sensor_def_qcomdev.conf /vendor/etc/sensors
+	adb shell chmod 644 /vendor/etc/sensors/sensor_def_qcomdev.conf
+10.	adb shell sync
+11.	adb reboot
+cat /sys/bus/msm_subsys/devices/subsys*/name
+cat /sys/bus/msm_subsys/devices/subsys*/state
+sns_dsps_tc0001查看驱动初始化是否成功
+mcu fw:
+/system/bin # ./toybox nxp_isp -v
+sns_regedit_ssi -r /mnt/vendor/persist/sensors/sns.reg查看注册文件的解析情况
+adb shell sns_regedit_ssi -r /mnt/vendor/persist/sensors/sns.reg > sensor_reg.txt
+sudo fastboot oem set-modem-sku "Revision: SC600YEMPAR05A04" 烧录修改modem版本。
+
+
+strings NON-HLOS.bin | grep "Quec_modem_version"
+adb root
+adb shell cat /dev/smd11 & echo "ati+csub\r">/dev/smd11
+
+adb root
+adb shell dumpsys sensorservice 
+adb shell pm list features | grep "sensor"
+
+adb shell getprop | grep "gsm.version.baseband"
+
+禁用客户APP：
+usb_mode.txt
+adb shell pm disable-user com.dena.auto.taxi.fss.dev
+编译adsp
+python ./build/build.py -c msm8953 -o all -f centaur
+python ./build/build.py -c msm8953 -o clean
+打包NON-HLOS.bin
+python ./build.py --nonhlos
+python ./build.py --clean
+
+adb shell
+su
+cd sys/devices/soc0
+echo 12 > select_image
+cat image_crm_version
+
+
+source mitac_project_env.sh -p surfing_pro_a10 --docker
+
+source mitac_project_env.sh -p surfing_pro -v 10
+source mitac_project_env.sh -p chiron_pro -v 10 --docker
+cd kernel/msm-4.9
+make mrproper
+bandroid -b -j4
+git remote -v
+git push origin HEAD:refs/for/
+development/vndk/tools/header-checker/utils/create_reference_dumps.py -l android.hardware.sensors@1.0 -products chiron_pro
+
+find . -name '*.exe' -type f -print -exec rm -rf {} \;
+
+
+adb root
+adb shell
+cat /dev/smd11 &
+echo "AT+QMBNCFG=\"autosel\"\r">/dev/smd11
+echo "AT+QMBNCFG=\"list\"\r">/dev/smd11
+
+public:
+hVoLTE-Verizon
+VoLTE-ATT
+
+ATT:
+hVoLTE-Verizon
+Ps-only-ATT
+
+Verizon:
+ps_only-Verizon
+Ps-only-ATT
+***************************************************************************************************************
+man 1 xxx   ——  查询shell命令，查询用户命令
+
+man 2 xxx   ——  查询系统调用，API
+
+man 3 xxx   ——  查询库函数
+
+man 4 xxx   ——  查询设备文件和特殊文件
+
+man 5 xxx   ——  查询配置文件及格式
+image打包解压
+解压
+out/host/linux-x86/bin/simg2img vendor.img vendor.img.raw
+mount -t ext4 -o loop vendor.img.raw mnt-vendor/
+
+
+adb root
+adb wa“git push origin HEAD:refs/for/it-for-device
+adb shell stop sensors
+adb shell "echo 'related' > /sys/bus/msm_subsys/devices/subsys2/restart_level"
+adb shell "echo 'restart' > /sys/kernel/boot_adsp/boot"
+QXDM的command:中输入send_data 75 37 03 48 00
+adb shell start sensors 
+
+***********************************************************************************************************************
+解决adb 权限问题
+sudo su
+adb kill-server
+adb start-server
+exit
+
+***********************************************************************************************************************
+切换到已存在的分支
+git status
+git stash/git checkout -- filename
+git checkout 分支名
+切换到新的分支
+git status
+git stash/git checkout -- filename
+git fetch origin tulkas2-dev-la-1-3-013361:tulkas2-dev-la-1-3-013361
+ git fetch origin mitac-sc600-quectel-20190515 --depth=10
+git checkout tulkas2-dev-la-1-3-013361
+
+更新代码
+项目顶层目录：
+repo branch查看
+repo start 工程名 --all切换整个工程
+repo sync（更新整个工程）
+或（部分更新）
+1. git status（查看本地分支文件信息，确保更新时不产生冲突）
+2. git checkout -- [file name] （若文件有修改，可以还原到最初状态; 若文件需要更新到服务器上，应该先merge到服务器，再更新到本地）
+3. git branch（查看当前分支情况）
+4. git pull origin tulkas2-dev-la-1-3-013361:tulkas2-dev-la-1-3-013361
+若命令执行成功，则更新代码成功！
+
+上传代码
+git branch
+git checkout 分支名
+git status
+git stash  暂存要提交的文件
+git pull origin 分支名:分支名 更新本地代码
+git stash pop  取出提交的文件
+git gui（若无安装请安装sudo apt-get update ；sudo apt-get install git-gui）
+点击未缓存的改动窗口文件
+填写提交描述
+点击“提交”按钮（提交到本地）
+点击“上传”按钮（上传到远程分支）
+gitk
+
+***********************************************************************************************************************
+日志打印
+sudo minicom -s
+sudo cutecom
+logservice：printk
+kermit（内核）：pr_info
+adb logcat -v time
+adb logcat | grep "xxx" > 1.txt
+
+adb shell dmesg > 1.txt
+
+adb shell
+su
+cat /proc/kmsg
+***********************************************************************************************************************
+烧写内核或lk
+adb shell
+su
+reboot bootloader
+sudo fastboot flash boot boot.img(内核)
+sudo fastboot flash aboot emmc_appsboot.mbn(lk)
+sudo fastboot reboot
+***********************************************************************************************************************
+wifi usb
+手机连接wifi
+打开开发者选项Wireless debugging
+查看ip：About phone->Status->IP address
+adb connect ip(可能出现unable to connect to 10.83.40.127:5555   ping ip 网络通的话，重新打开Wireless debugging)
+adb shell
+su
+*************************************************************************************************************************
+启动kermit
+sudo su
+kermit
+connect/c
+ctrl+\+c 
+quit                                                                                                                                                                                                                                                                                                                                                                                              
+********************************************************************************************************************
+安装软件
+adb install xxx.apk
+拷贝文件
+adb root
+adb push filename
+***********************************************************************************************************************
+getevent查看上报事件
+adb shell
+su
+getevent -i
+getevent -lr /dev/input/event*
+**********************************************************************************************************************
+i2c tool
+ i2c-tools中含有四個執行檔
+•i2cdetect – 用來列舉I2C bus和上面所有的裝置
+•i2cdump – 顯示裝置上所有register的值
+•i2cget – 讀取裝置上某個register的值
+•i2cset – 寫入裝置上某個register
+
+adb root
+sudo adb push ./i2cdetect /system
+db shell chmod 644 /system/i2cset
+adb shell sync
+adb reboot
+adb shell
+su
+cd system
+./i2cdetect -l 查看i2c号
+./i2cdetect -y -r 1  查看i2c1设备的地址
+./i2cdump -y -f 1 0x38 查看i2c1设备，0x38地址上的寄存器值
+*************************************************************************************************************************
+安装git,python,repo.
+Download the utility
+1.cd ~
+2.git clone http://10.88.25.195/aiotbc/git/bsp/mitac_utils/init 
+3. cd init
+4.source repo_manager.sh
+            
+============================================================================================================
+For MRC side:
+1. mkdir -p ~/all_bsp_home/surfing_pro_a10
+2. rimp -p surfing_pro_a10 -d 30 -t ~/all_bsp_home/surfing_pro_a10 --host_url "http://10.83.64.51/aiotbc/git/bsp" -m mitac-sc600_10-20200319.xml
+3. smp
+4. rimp -p surfing_pro_a10 -d 30 -t ~/all_bsp_home/surfing_pro_a10 -g -m mitac-sc600_10-20200319.xml
+5. smp -g
+
+
+
+1. download pavo  http://10.88.200.20/wiki/doku.php?id=common:rd4_bsp_download&#download_msm8909_bsp
+
+1.1 mkdir -p ~/all_bsp_home/pavo
+1.2 rimp -p pavo -d 30 -t  ~/all_bsp_home/pavo
+1.3 smp
+2. pavo build env    
+2.1 cd ~/all_bsp_home/pavo
+2.2 source mitac_project_env.sh -p pavo --docker
+
+****************************************************************************************************************
+timesheet
+http://oaweb.mic.com.tw/tcst/
+
+git
+http://10.88.200.20/rd4/hera/?o=age
+
+wiki
+http://10.88.200.20/wiki/doku.php?id=projects:hera_q
+longrd.wang
+1qaz@WSX
+
+JIRA
+https://jira.navman.co.nz/jira/browse/TI-1?filter=24846
+*****************************************************************************************************************************************
+
