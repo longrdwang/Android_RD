@@ -1,4 +1,5 @@
-﻿
+去除ie广告悬浮窗：工具->Internet选项->安全->自定义级别-> 脚本
+
 gaotong:longrd.wang@mic.com.tw
 !QAZ2wsx
 sudo umount /media/usb0
