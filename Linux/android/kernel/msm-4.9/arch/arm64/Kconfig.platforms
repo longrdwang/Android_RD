@@ -203,6 +203,12 @@ config ARCH_SDM450
 	  This enables support for the sdm450 chipset. If you do not
 	  wish to build a kernel that runs on this chipset, say 'N' here.
 
+config ARCH_CHIRON_PRO
+	bool "Enable Support for Mitac Inc. Chiron Pro"
+	help
+	  This enables support for the chiron pro tablet. If you do not
+	  wish to build a kernel that runs on this chipset, say 'N' here.
+
 config ARCH_SDM632
 	bool "Enable Support for Qualcomm Technologies Inc. SDM632"
 	depends on ARCH_QCOM

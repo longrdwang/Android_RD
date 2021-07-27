@@ -12,6 +12,9 @@ dts-dirs += hisilicon
 dts-dirs += marvell
 dts-dirs += mediatek
 dts-dirs += nvidia
+ifeq ($(CONFIG_ARCH_CHIRON_PRO),y)
+dts-dirs += qcom/chiron_pro
+endif
 dts-dirs += renesas
 dts-dirs += rockchip
 dts-dirs += socionext
