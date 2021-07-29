@@ -1,0 +1,14 @@
+
+1.git clone https://github.com/VundleVim/Vundle.vim.git
+~/.vim/bundle/Vundle.vim（插件管理软件）
+2.sudo apt install clang
+3.Ubuntu软件中安装大于3.14版本的cmake。（用命令安装的可能版本较低）
+4.sudo apt-get install python3-dev
+5.sudo apt-get install g++-8
+6.cd ~/.vim/bundle/（放到插件的目录下）
+7.git clone https://github.com/ycm-core/YouCompleteMe.git（用插件管理软件下在YouCompleteMe可能会失败，所以这里从网站下）
+8.cd YouCompleteMe
+9.git submodule update --init --recursive
+10.CC=gcc-8 CXX=g++-8 python3 install.py --clangd-completer(编译YouCompleteMe)
+
+

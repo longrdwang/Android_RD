@@ -4,6 +4,8 @@ set ruler "显示当前光标的行列信息
 syntax on "语法高亮显示.(这个肯定是要的.)
 set background=dark "背景颜色暗色.(我觉得不错,保护眼睛.)
 set history=50 "设置命令历史记录为50条.
+set mouse=n		" Enable mouse usage (all modes)
+set laststatus=2
 set hls "寻找匹配是高亮度显示的
 set lbr "不在单词中间断行。
 set fo+=mB "打开断行模块对亚洲语言支持
@@ -19,8 +21,9 @@ set cin " 打开 C/C++ 风格的自动缩进。
 set cino=:4g4t4(sus "设定 C/C++ 风格自动缩进的选项
 set vb t_vb= "当vim进行编辑时，如果命令错误，会发出一个响声，该设置去掉响
 set incsearch  "搜索时在未完全输入完毕要检索的文本时就开始检索。
+" 选中状态下 Ctrl+c 复制
+vmap <C-c> "+y
 set tags=/home/user/project2/gemini/adsp_proc
-filetype plugin indent on "开启了Vim的三种智能:自动识别文件类型、
 autocmd FileType text setlocal textwidth=78
 autocmd BufReadPost *
   \if line("°\"")>0&&line("°\"")<=line("$")|
@@ -34,10 +37,56 @@ set tags=../tags
 set tags=tags
 " 用空格键来开关折叠
 set foldenable
-set foldmethod=manual
-nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<CR>
+set foldmethod=marker
+nnoremap <space> @=((foldclosed(line('.')) < 0) ? 'zf%' : 'zd')<CR>
 "if has(“vms”)
 "" set nobackup
 "else
 "" set backup
-
+"===========================Vundle环境设置=================================
+set nocompatible	"vim比vi支持更多功能，如showcmd，避免冲突和副作用
+filetype 
+set rtp+=~/.vim/bundle/Vundle.vim
+set rtp+=~/.vim/bundle/YouCompleteMe
+set rtp+=~/.vim/bundle/YCM-Generator
+"vundle管理的插件列表必须位于vundle#begin()和vundle#end()之间
+call vundle#begin()
+"避免PluginClean把自己卸载了
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'rdnetto/YCM-Generator'
+"YCM 自动补全设置
+"let g:ycm_key_invoke_completion = '<c-z>'
+set completeopt-=preview   "关闭preview窗口
+"启用基于语义的自动补全
+"let g:ycm_collect_identifiers_from_tags_files=1 " 开启 YCM 基于标签引擎
+let g:ycm_error_symbol = '✗'
+let g:ycm_warning_symbol = '⚠'
+let g:ycm_semantic_triggers =  {
+			\ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+			\ 'cs,lua,javascript': ['re!\w{2}']
+			\ }
+"设置白名单文件
+let g:ycm_filetype_whitelist = {
+			\ "c":1,
+			\ "cpp":1,
+			\ "sh":1,
+			\ "py":1
+			\ }
+"修改提示框颜色
+"highlight Pmenu ctermfg=4 ctermbg=8 guifg=#ffffff guibg=#000000  "提示不再是粉红色(pink)
+highlight PMenu ctermfg=yellow ctermbg=darkgrey guifg=#ffffff guibg=#000000
+highlight PMenuSel ctermfg=white ctermbg=black guifg=#000000 guibg=#ffffff
+"声明、定义跳转
+nnoremap <C-u> :YcmCompleter GoToDefinitionElseDeclaration<CR>
+nnoremap <F5> :YcmForceCompileAndDiagnostics<CR>
+"YCM-Generator配置
+nnoremap <C-y> :YcmGenerateConfig ./<CR>  
+call vundle#end()
+filetype plugin indent on "开启了Vim的三种智能:自动识别文件类型、
+"安装插件，先找到其在github的地址，再将配置信息加入.vimrc中的call
+"vundle#begin()和call vundle#end()之间，最后进入vim执行
+":PluginInstall 便可自动安装
+"要卸载插件，先在.vimrc中注释或删除对应插件配置信息，然后在vim中执行
+":PluginClean便可卸载对应插件
+"批量更新，只需执行:PluginUpdate
